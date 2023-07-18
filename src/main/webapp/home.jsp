@@ -67,28 +67,51 @@ Hello ${username}
 			</ul>
 		</div>
 		<div class="sub-body">
-			<c:if test="${empty bookList and empty bookListSearch}">
-		no book
+			<c:if test="${empty bookList and empty bookListBySearch}">
+			No Book
 		</c:if>
 			<c:if test="${not empty bookList}">
 				<ul>
-					<c:forEach var="book" items="${bookList}">
-						<a href="book?bookId=${book.id} ">
+					<c:forEach var="book" items="${pageBooks}">
+						<a href="book?bookId=${book.id}">
 							<li>${book.name}</li>
 						</a>
 					</c:forEach>
 				</ul>
 			</c:if>
-			<c:if test="${not empty bookListSearch}">
+			<c:if test="${not empty bookListBySearch}">
 				<ul>
-					<c:forEach var="book" items="${bookListSearch}">
-						<a href="book?bookId=${book.id} ">
+					<c:forEach var="book" items="${bookListBySearch}">
+						<a href="book?bookId=${book.id}">
 							<li>${book.name}</li>
 						</a>
 					</c:forEach>
 				</ul>
 			</c:if>
 		</div>
+		<c:if test="${not empty currentPage and totalPages > 1}">
+			<div class="pagination">
+				<c:if test="${currentPage > 1}">
+					<a href="home?page=${currentPage - 1}">&laquo; Previous</a>
+				</c:if>
+				<c:forEach var="page" begin="1" end="${totalPages}">
+					<c:choose>
+						<c:when test="${currentPage == page}">
+							<span class="current-page">${page}</span>
+						</c:when>
+						<c:otherwise>
+							<a href="home?page=${page}">${page}</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+				<c:if test="${currentPage < totalPages}">
+					<a href="home?page=${currentPage + 1}">Next &raquo;</a>
+				</c:if>
+			</div>
+		</c:if>
 	</div>
+
+	
+	
 </body>
 </html>
