@@ -209,4 +209,13 @@ public class BookService {
 		}
 		return book;
 	}
+	public List<Book> getBooksByPage(List<Book> bookList, int currentPage, int booksPerPage) {
+		int startIndex = (currentPage - 1) * booksPerPage;
+		int endIndex = Math.min(startIndex + booksPerPage, bookList.size());
+		return bookList.subList(startIndex, endIndex);
+	}
+
+	public int getTotalPages(List<Book> bookList, int booksPerPage) {
+		return (int) Math.ceil((double) bookList.size() / booksPerPage);
+	}
 }
