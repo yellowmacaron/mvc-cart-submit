@@ -43,32 +43,47 @@ public class HomeServlet extends HttpServlet {
 		try {
 			CategoryService categoryService = new CategoryService();
 			List<Category> categoryList = categoryService.getAllCategories();
-
+			
 			BookService bookService = new BookService();
-
+			
+			String bookName = request.getParameter("bookName");
+			List<Book> bookListBySearch = new ArrayList<Book>();
+			
 			String categoryId = request.getParameter("categoryId");
 			List<Book> bookList = new ArrayList<Book>();
+			int currentPage = 1;
+			
+			if (categoryId == null && bookName == null) {			
+				
+		        if (request.getParameter("page") != null) {
+		            currentPage = Integer.parseInt(request.getParameter("page"));
+		        }
 
-			String bookName = request.getParameter("bookName");
-			List<Book> bookListSearch = new ArrayList<Book>();
-
-			if (categoryId == null && bookName == null) {
-				bookList = bookService.getAllBooks();
+		        int booksPerPage = 2;
+		        bookList = bookService.getAllBooks();
+		        List<Book> pageBooks = bookService.getBooksByPage(bookList, currentPage, booksPerPage);
+		        int totalPages = bookService.getTotalPages(bookList, booksPerPage);
+		        request.setAttribute("totalPages", totalPages);
+		        request.setAttribute("currentPage", currentPage);
+		        request.setAttribute("pageBooks", pageBooks);
 			}
-			if (categoryId != null) {
-				bookList = bookService.getBooksByCategoryId(Integer.parseInt(categoryId));
+			
+			if (bookName != null){
+				bookListBySearch = bookService.getBooksByName(bookName);	
+				}
+			if (categoryId != null)	{	
+					bookList = bookService.getBooksByCategoryId(Integer.parseInt(categoryId));
 			}
-			if (bookName != null) {
-				bookListSearch = bookService.getBooksByName(bookName);
-				request.setAttribute("bookName", bookName);
-			}
+			
 			RequestDispatcher rd = request.getRequestDispatcher("home.jsp");
 			request.setAttribute("categoryList", categoryList);
 			request.setAttribute("bookList", bookList);
-			request.setAttribute("bookListSearch", bookListSearch);
-
+			request.setAttribute("bookListBySearch", bookListBySearch);
+			request.setAttribute("bookName", bookName);
+			
+			
+			 
 			rd.forward(request, response);
-
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
